@@ -26,21 +26,15 @@ public class Main extends JFrame { // Приложение – наследни�
 
         JButton pause_button = new JButton("Pause");
         pause_button.setBounds(0, 0, 200, 50);
-        pause_button.addActionListener(e -> {
-            panel.pause();
-        });
+        pause_button.addActionListener(e -> panel.pause());
 
         JButton resume_button = new JButton("Resume");
         resume_button.setBounds(0, 50, 200, 50);
-        resume_button.addActionListener(e -> {
-            panel.resume();
-        });
+        resume_button.addActionListener(e -> panel.resume());
 
         JButton reset_button = new JButton("Reset");
         reset_button.setBounds(0, 100, 200, 50);
-        reset_button.addActionListener(e -> {
-            panel.reset();
-        });
+        reset_button.addActionListener(e -> panel.reset());
 
         add(pause_button);
         add(resume_button);
@@ -67,22 +61,19 @@ class MyPanel extends JPanel implements MouseListener {
 
     public MyPanel(TextField tf) {
         this.tf = tf;
-        dt = 0.005;
+        dt = 0.01;
         t = 0;
         addMouseListener(this); // добавляем к текущей Панели обработчик мыши
         bodies = new ArrayList<>();
     }
 
     public void start_simulation() {
-        Runnable render = new Runnable() {
-            @Override
-            public void run() {
-                if(!pressed && !stop){
-                    update_bodies();
-                    tf.setText("t = " + String.format("%.3f", t));
-                }
-                repaint();
+        Runnable render = () -> {
+            if (!pressed && !stop) {
+                update_bodies();
+                tf.setText("t = " + String.format("%.3f", t));
             }
+            repaint();
         };
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         executor.scheduleAtFixedRate(render, 0, (long) (dt * 1000), TimeUnit.MILLISECONDS);
@@ -102,12 +93,12 @@ class MyPanel extends JPanel implements MouseListener {
     }
 
     private void update_bodies() {
-        ArrayList<Body> bodies1 = (ArrayList<Body>) bodies.clone();
-        for (Body b : bodies1) {
+        ArrayList<Body> bodies_updated = new ArrayList<>(bodies);
+        for (Body b : bodies_updated) {
             b.update(bodies, dt);
             b.hue += dt;
         }
-        bodies = (ArrayList<Body>) bodies1.clone();
+        bodies = bodies_updated;
         t += dt;
     }
 
@@ -117,10 +108,13 @@ class MyPanel extends JPanel implements MouseListener {
         for (Body b : bodies) {
             Vector arrow_start = b.position, arrow_end = b.position.add(b.velocity);
             double s = Math.sqrt(b.mass) * 2;
+
             g.setColor(Color.getHSBColor(b.hue, 1, 1));
             g.fillOval((int) (arrow_start.x - (s / 2)), (int) (arrow_start.y - (s / 2)), (int) s, (int) s);
+
             g.setColor(Color.BLACK);
             g.drawOval((int) (arrow_start.x - (s / 2)), (int) (arrow_start.y - (s / 2)), (int) s, (int) s);
+
             g.drawLine((int) arrow_start.x, (int) arrow_start.y, (int) arrow_end.x, (int) arrow_end.y);
         }
     }
@@ -133,9 +127,9 @@ class MyPanel extends JPanel implements MouseListener {
 
     public void mouseReleased(MouseEvent e) {
         Body b = bodies.get(bodies.size() - 1);
-        Vector cur = new Vector(e.getX(), e.getY());
-        b.mass = Math.max(cur.sub(b.position).length() * cur.sub(b.position).length(), 10);
-        //out.println(b.position.x + " " + b.position.y + " " + cur.x + " " + cur.y + " " + b.mass);
+        Vector drag = new Vector(e.getX(), e.getY()).sub(b.position);
+        //b.velocity = drag;
+        b.mass = Math.max(drag.length() * drag.length(), 10);
         pressed = false;
         bodies.sort((o1, o2) -> Double.compare(o2.mass, o1.mass));
         repaint();
@@ -240,7 +234,7 @@ class Body {
     }
 
     Vector force(Body b) {
-        return new Vector(position, b.position).setlength((mass * b.mass) / distTo(b) * distTo(b));
+        return new Vector(position, b.position).setlength((100 * (mass * b.mass)) / (distTo(b) * distTo(b)));
     }
 
     void update(ArrayList<Body> bodies, double dt) {
@@ -248,8 +242,8 @@ class Body {
         for (Body b : bodies) {
             force_sum.addin(force(b));
         }
-        Vector acceleration = force_sum.div(mass);
-        velocity.addin(acceleration.mult(dt));
+
         position.addin(velocity.mult(dt));
+        velocity.addin(force_sum.div(mass).mult(dt));
     }
 }
