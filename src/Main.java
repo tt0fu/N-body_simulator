@@ -1,7 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -48,14 +46,17 @@ public class Main extends JFrame { // Приложение – наследни�
     }
 
     public static void main(String[] args) {
-        Main mw = new Main("simulation");
+        Main main_window = new Main("simulation");
     }
 }
 
 class MyPanel extends JPanel implements MouseListener {
     private double dt, t;
     private ArrayList<Body> bodies;
-    private boolean stop, pressed;
+    private Body current_body;
+    private boolean stop;
+    private int creation_step;
+
 
     private TextField tf;
 
@@ -63,17 +64,18 @@ class MyPanel extends JPanel implements MouseListener {
         this.tf = tf;
         dt = 0.01;
         t = 0;
+        creation_step = 0;
         addMouseListener(this); // добавляем к текущей Панели обработчик мыши
         bodies = new ArrayList<>();
     }
 
     public void start_simulation() {
         Runnable render = () -> {
-            if (!pressed && !stop) {
+            if (creation_step == 0 && !stop) {
                 update_bodies();
-                tf.setText("t = " + String.format("%.3f", t));
             }
             repaint();
+            tf.setText("t = " + String.format("%.3f", t));
         };
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         executor.scheduleAtFixedRate(render, 0, (long) (dt * 1000), TimeUnit.MILLISECONDS);
@@ -96,7 +98,7 @@ class MyPanel extends JPanel implements MouseListener {
         ArrayList<Body> bodies_updated = new ArrayList<>(bodies);
         for (Body b : bodies_updated) {
             b.update(bodies, dt);
-            b.hue += dt;
+            b.hue += dt/10;
         }
         bodies = bodies_updated;
         t += dt;
@@ -120,19 +122,26 @@ class MyPanel extends JPanel implements MouseListener {
     }
 
     public void mousePressed(MouseEvent e) {
-        pressed = true;
-        Body p = new Body(new Vector(e.getX(), e.getY()), new Vector(0, 0), 1, 0);
-        bodies.add(p);
+        creation_step++;
+        switch (creation_step) {
+            case 1 -> {
+                current_body = new Body(new Vector(e.getX(), e.getY()), new Vector(0, 0), 1, 0);
+                bodies.add(current_body);
+            }
+            case 2 -> current_body.velocity = new Vector(e.getX(), e.getY()).sub(current_body.position);
+            case 3 -> {
+                double mass = new Vector(e.getX(), e.getY()).sub(current_body.position).length();
+                //b.velocity = drag;
+                current_body.mass = Math.max(mass * mass, 10);
+                bodies.sort((o1, o2) -> Double.compare(o2.mass, o1.mass));
+                creation_step = 0;
+            }
+        }
+
     }
 
     public void mouseReleased(MouseEvent e) {
-        Body b = bodies.get(bodies.size() - 1);
-        Vector drag = new Vector(e.getX(), e.getY()).sub(b.position);
-        //b.velocity = drag;
-        b.mass = Math.max(drag.length() * drag.length(), 10);
-        pressed = false;
-        bodies.sort((o1, o2) -> Double.compare(o2.mass, o1.mass));
-        repaint();
+
     }
 
     public void mouseClicked(MouseEvent e) {
