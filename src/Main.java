@@ -8,29 +8,34 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
-public class Main extends JFrame { // Приложение – наследник JFrame (окна)
-    public Main(String title) {
+class MainWindow extends JFrame {
+
+    private MyPanel panel;
+    private TextField tf;
+    private JButton pause_button, resume_button, reset_button;
+
+    public MainWindow(String title) {
         super(title);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         //setUndecorated(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        TextField tf = new TextField();
+        tf = new TextField();
         tf.setBounds(0, 150, 200, 40);
 
-        MyPanel panel = new MyPanel(tf);
+        panel = new MyPanel(tf);
         panel.setBounds(0, 0, 1920, 1080);
         panel.setOpaque(false);
 
-        JButton pause_button = new JButton("Pause");
+        pause_button = new JButton("Pause");
         pause_button.setBounds(0, 0, 200, 50);
         pause_button.addActionListener(e -> panel.pause());
 
-        JButton resume_button = new JButton("Resume");
+        resume_button = new JButton("Resume");
         resume_button.setBounds(0, 50, 200, 50);
         resume_button.addActionListener(e -> panel.resume());
 
-        JButton reset_button = new JButton("Reset");
+        reset_button = new JButton("Reset");
         reset_button.setBounds(0, 100, 200, 50);
         reset_button.addActionListener(e -> panel.reset());
 
@@ -42,34 +47,38 @@ public class Main extends JFrame { // Приложение – наследни�
         setSize(1920, 1080);
         setLayout(null);
         setVisible(true);
-        panel.start_simulation();
     }
 
+    public void start() {
+        panel.start_simulation(0.01);
+    }
+}
+
+public class Main { // Приложение – наследник JFrame (окна)
     public static void main(String[] args) {
-        Main main_window = new Main("simulation");
+        MainWindow main_window = new MainWindow("simulation");
+        main_window.start();
     }
 }
 
 class MyPanel extends JPanel implements MouseListener {
-    private double dt, t;
+    private final TextField tf;
+    private double t, dt;
     private ArrayList<Body> bodies;
     private Body current_body;
     private boolean stop;
     private int creation_step;
 
-
-    private TextField tf;
-
     public MyPanel(TextField tf) {
         this.tf = tf;
-        dt = 0.01;
         t = 0;
         creation_step = 0;
         addMouseListener(this); // добавляем к текущей Панели обработчик мыши
         bodies = new ArrayList<>();
     }
 
-    public void start_simulation() {
+    public void start_simulation(double dt) {
+        this.dt = dt;
         Runnable render = () -> {
             if (creation_step == 0 && !stop) {
                 update_bodies();
