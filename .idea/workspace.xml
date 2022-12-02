@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d21871b6-0043-417c-9681-15f729f5c1b3" name="Changes" comment="implemented a new body creation system">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="d21871b6-0043-417c-9681-15f729f5c1b3" name="Changes" comment="class disambiguation, refactoring">
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -52,7 +51,7 @@
       <option name="presentableId" value="Default" />
       <updated>1669965152327</updated>
       <workItem from="1669965154304" duration="382000" />
-      <workItem from="1669965541292" duration="3385000" />
+      <workItem from="1669965541292" duration="4154000" />
     </task>
     <task id="LOCAL-00001" summary="implemented a new body creation system">
       <created>1669967154886</created>
@@ -68,7 +67,14 @@
       <option name="project" value="LOCAL" />
       <updated>1669967207044</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="class disambiguation, refactoring">
+      <created>1669969262225</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1669969262225</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -79,7 +85,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -87,6 +105,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="implemented a new body creation system" />
-    <option name="LAST_COMMIT_MESSAGE" value="implemented a new body creation system" />
+    <MESSAGE value="class disambiguation, refactoring" />
+    <option name="LAST_COMMIT_MESSAGE" value="class disambiguation, refactoring" />
   </component>
 </project>

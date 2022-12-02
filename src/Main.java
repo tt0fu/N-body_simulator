@@ -17,8 +17,9 @@ class MainWindow extends JFrame {
     public MainWindow(String title) {
         super(title);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        //setUndecorated(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setSize(1920, 1080);
+        setLayout(null);
 
         tf = new TextField();
         tf.setBounds(0, 150, 200, 40);
@@ -44,8 +45,6 @@ class MainWindow extends JFrame {
         add(reset_button);
         add(tf);
         add(panel);
-        setSize(1920, 1080);
-        setLayout(null);
         setVisible(true);
     }
 
@@ -83,8 +82,8 @@ class MyPanel extends JPanel implements MouseListener {
             if (creation_step == 0 && !stop) {
                 update_bodies();
             }
-            repaint();
             tf.setText("t = " + String.format("%.3f", t));
+            repaint();
         };
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         executor.scheduleAtFixedRate(render, 0, (long) (dt * 1000), TimeUnit.MILLISECONDS);
