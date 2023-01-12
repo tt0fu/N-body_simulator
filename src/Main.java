@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -60,7 +61,7 @@ public class Main { // Приложение – наследник JFrame (ок�
     }
 }
 
-class MyPanel extends JPanel implements MouseListener {
+class MyPanel extends JPanel implements MouseListener, MouseMotionListener {
     private final TextField tf;
     private double t, dt;
     private ArrayList<Body> bodies;
@@ -73,6 +74,7 @@ class MyPanel extends JPanel implements MouseListener {
         t = 0;
         creation_step = 0;
         addMouseListener(this); // добавляем к текущей Панели обработчик мыши
+        addMouseMotionListener(this);
         bodies = new ArrayList<>();
     }
 
@@ -138,14 +140,25 @@ class MyPanel extends JPanel implements MouseListener {
             }
             case 2 -> current_body.velocity = new Vector(e.getX(), e.getY()).sub(current_body.position);
             case 3 -> {
-                double mass = new Vector(e.getX(), e.getY()).sub(current_body.position).length();
-                //b.velocity = drag;
-                current_body.mass = Math.max(mass * mass, 10);
+                double size = new Vector(e.getX(), e.getY()).sub(current_body.position).length();
+                current_body.mass = Math.max(size * size, 10);
                 bodies.sort((o1, o2) -> Double.compare(o2.mass, o1.mass));
                 creation_step = 0;
             }
         }
+    }
 
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        System.out.println("Mouse moved");
+        switch (creation_step) {
+            case 1 -> current_body.velocity = new Vector(e.getX(), e.getY()).sub(current_body.position);
+            case 2 -> {
+                double size = new Vector(e.getX(), e.getY()).sub(current_body.position).length();
+                current_body.mass = Math.max(size * size, 10);
+            }
+        }
+        repaint();
     }
 
     public void mouseReleased(MouseEvent e) {
@@ -159,6 +172,11 @@ class MyPanel extends JPanel implements MouseListener {
     }
 
     public void mouseExited(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
     }
 }
 
@@ -197,27 +215,12 @@ class Vector {
         return new Vector(x - v.x, y - v.y);
     }
 
-    void subin(Vector v) {
-        x -= v.x;
-        y -= v.y;
-    }
-
     Vector mult(double k) {
         return new Vector(x * k, y * k);
     }
 
     Vector div(double k) {
         return new Vector(x / k, y / k);
-    }
-
-    void multin(double k) {
-        x *= k;
-        y *= k;
-    }
-
-    void divin(double k) {
-        x /= k;
-        y /= k;
     }
 
     double length() {
@@ -251,7 +254,7 @@ class Body {
     }
 
     Vector force(Body b) {
-        return new Vector(position, b.position).setlength((100 * (mass * b.mass)) / (distTo(b) * distTo(b)));
+        return new Vector(position, b.position).setlength((100 * (mass * b.mass)) / distTo(b));
     }
 
     void update(ArrayList<Body> bodies, double dt) {
