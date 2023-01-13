@@ -11,9 +11,11 @@ import java.util.concurrent.TimeUnit;
 
 class MainWindow extends JFrame {
 
-    private MyPanel panel;
-    private TextField tf;
-    private JButton pause_button, resume_button, reset_button;
+    private final MyPanel panel;
+    private final TextField tf;
+    private final JButton pause_button;
+    private final JButton resume_button;
+    private final JButton reset_button;
 
     public MainWindow(String title) {
         super(title);
@@ -81,9 +83,6 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener {
     public void start_simulation(double dt) {
         this.dt = dt;
         Runnable render = () -> {
-            if (creation_step == 0 && !stop) {
-                update_bodies();
-            }
             tf.setText("t = " + String.format("%.3f", t));
             repaint();
         };
@@ -117,17 +116,31 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
+        if (creation_step == 0 && !stop) {
+            update_bodies();
+        }
+
         for (Body b : bodies) {
-            Vector arrow_start = b.position, arrow_end = b.position.add(b.velocity);
+            Vector center = b.position, arrow_end = b.position.add(b.velocity);
             double s = Math.sqrt(b.mass) * 2;
 
+            double ts = 1;
+            float thue = b.hue - (float) (dt * b.trail.size());
+            for (Vector t : b.trail) {
+                g.setColor(Color.getHSBColor(thue, 1, 1));
+                g.fillOval((int) (t.x - ts / 2), (int) (t.y - ts / 2), (int) ts, (int) ts);
+                ts += (s / b.trail.size());
+                thue += dt;
+            }
+
             g.setColor(Color.getHSBColor(b.hue, 1, 1));
-            g.fillOval((int) (arrow_start.x - (s / 2)), (int) (arrow_start.y - (s / 2)), (int) s, (int) s);
+            g.fillOval((int) (center.x - (s / 2)), (int) (center.y - (s / 2)), (int) s, (int) s);
 
             g.setColor(Color.BLACK);
-            g.drawOval((int) (arrow_start.x - (s / 2)), (int) (arrow_start.y - (s / 2)), (int) s, (int) s);
+            g.drawOval((int) (center.x - (s / 2)), (int) (center.y - (s / 2)), (int) s, (int) s);
 
-            g.drawLine((int) arrow_start.x, (int) arrow_start.y, (int) arrow_end.x, (int) arrow_end.y);
+            g.drawLine((int) center.x, (int) center.y, (int) arrow_end.x, (int) arrow_end.y);
+
         }
     }
 
@@ -177,92 +190,105 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener {
     public void mouseDragged(MouseEvent e) {
 
     }
-}
 
-class Vector {
-    public double x, y;
+    class Vector {
+        public double x, y;
 
-    Vector() {
-        x = 0;
-        y = 0;
-    }
-
-    Vector(double x, double y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    Vector(Vector a, Vector b) {
-        x = b.x - a.x;
-        y = b.y - a.y;
-    }
-
-    private boolean eq(double a, double b) {
-        return Math.abs(a - b) < 1e-5;
-    }
-
-    Vector add(Vector v) {
-        return new Vector(x + v.x, y + v.y);
-    }
-
-    void addin(Vector v) {
-        x += v.x;
-        y += v.y;
-    }
-
-    Vector sub(Vector v) {
-        return new Vector(x - v.x, y - v.y);
-    }
-
-    Vector mult(double k) {
-        return new Vector(x * k, y * k);
-    }
-
-    Vector div(double k) {
-        return new Vector(x / k, y / k);
-    }
-
-    double length() {
-        return Math.sqrt(x * x + y * y);
-    }
-
-    Vector setlength(double l) {
-        if (eq(length(), 0)) {
-            return new Vector();
-        }
-        double k = l / length();
-        return mult(k);
-    }
-}
-
-class Body {
-    public Vector position, velocity;
-    public double mass;
-    public float hue;
-
-    public Body(Vector position, Vector velocity, double mass, float hue) {
-        this.position = position;
-        this.velocity = velocity;
-        this.mass = mass;
-        this.hue = hue;
-    }
-
-    double distTo(Body b) {
-        Vector d = new Vector(position, b.position);
-        return d.length();
-    }
-
-    Vector force(Body b) {
-        return new Vector(position, b.position).setlength((100 * (mass * b.mass)) / distTo(b));
-    }
-
-    void update(ArrayList<Body> bodies, double dt) {
-        Vector force_sum = new Vector();
-        for (Body b : bodies) {
-            force_sum.addin(force(b));
+        Vector() {
+            x = 0;
+            y = 0;
         }
 
-        position.addin(velocity.mult(dt));
-        velocity.addin(force_sum.div(mass).mult(dt));
+        Vector(double x, double y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        Vector(Vector a, Vector b) {
+            x = b.x - a.x;
+            y = b.y - a.y;
+        }
+
+        private boolean eq(double a, double b) {
+            return Math.abs(a - b) < 1e-5;
+        }
+
+        public Vector copy() {
+            return new Vector(x, y);
+        }
+
+        Vector add(Vector v) {
+            return new Vector(x + v.x, y + v.y);
+        }
+
+        void addin(Vector v) {
+            x += v.x;
+            y += v.y;
+        }
+
+        Vector sub(Vector v) {
+            return new Vector(x - v.x, y - v.y);
+        }
+
+        Vector mult(double k) {
+            return new Vector(x * k, y * k);
+        }
+
+        Vector div(double k) {
+            return new Vector(x / k, y / k);
+        }
+
+        double length() {
+            return Math.sqrt(x * x + y * y);
+        }
+
+        Vector setlength(double l) {
+            if (eq(length(), 0)) {
+                return new Vector();
+            }
+            double k = l / length();
+            return mult(k);
+        }
+    }
+
+    class Body {
+        public Vector position, velocity;
+        public double mass;
+        public float hue;
+        public ArrayList<Vector> trail;
+
+        public Body(Vector position, Vector velocity, double mass, float hue) {
+            this.position = position;
+            this.velocity = velocity;
+            this.mass = mass;
+            this.hue = hue;
+            trail = new ArrayList<>();
+        }
+
+        double distTo(Body b) {
+            Vector d = new Vector(position, b.position);
+            return d.length();
+        }
+
+        Vector force(Body b) {
+            return new Vector(position, b.position).setlength((100 * (mass * b.mass)) / distTo(b));
+        }
+
+        void update(ArrayList<Body> bodies, double dt) {
+            Vector force_sum = new Vector();
+            for (Body b : bodies) {
+                force_sum.addin(force(b));
+            }
+            if (trail.isEmpty() || new Vector(trail.get(trail.size() - 1), position).length() > 10) {
+                trail.add(position.copy());
+            }
+            if (trail.size() > 20) {
+                trail.remove(0);
+            }
+            position.addin(velocity.mult(dt));
+            velocity.addin(force_sum.div(mass).mult(dt));
+        }
     }
 }
+
+
