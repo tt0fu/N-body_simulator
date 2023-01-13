@@ -150,7 +150,6 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        System.out.println("Mouse moved");
         switch (creation_step) {
             case 1 -> current_body.velocity = new Vector(e.getX(), e.getY()).sub(current_body.position);
             case 2 -> {
