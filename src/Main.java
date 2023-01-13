@@ -1,9 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -63,21 +62,28 @@ public class Main { // Приложение – наследник JFrame (ок�
     }
 }
 
-class MyPanel extends JPanel implements MouseListener, MouseMotionListener {
+class MyPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
     private final TextField tf;
+    private final Random rand;
     private double t, dt;
     private ArrayList<Body> bodies;
     private Body current_body;
     private boolean stop;
     private int creation_step;
+    private double dx, dy, scale;
 
     public MyPanel(TextField tf) {
         this.tf = tf;
         t = 0;
         creation_step = 0;
-        addMouseListener(this); // добавляем к текущей Панели обработчик мыши
+        addMouseListener(this);
         addMouseMotionListener(this);
+        addMouseWheelListener(this);
         bodies = new ArrayList<>();
+        rand = new Random((long) (t * 1000));
+        dx = 0;
+        dy = 0;
+        scale = 1;
     }
 
     public void start_simulation(double dt) {
@@ -101,6 +107,9 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener {
     public void reset() {
         bodies.clear();
         t = 0;
+        dx = 1920/2;
+        dy = 1080/2;
+        scale = 1;
     }
 
     private void update_bodies() {
@@ -113,13 +122,24 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener {
         t += dt;
     }
 
+    private void fillCircle(Graphics g, Vector position, double size) {
+        g.fillOval((int) ((position.x - size / 2 + dx) * scale), (int) ((position.y - size / 2 + dy) * scale), (int) (size * scale), (int) (size * scale));
+    }
+
+    private void drawCircle(Graphics g, Vector position, double size) {
+        g.drawOval((int) ((position.x - size / 2 + dx) * scale), (int) ((position.y - size / 2 + dy) * scale), (int) (size * scale), (int) (size * scale));
+    }
+
+    private void drawLine(Graphics g, Vector start, Vector end) {
+        g.drawLine((int) ((start.x + dx) * scale), (int) ((start.y + dy) * scale), (int) ((end.x + dx) * scale), (int) ((end.y + dy) * scale));
+    }
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);
         if (creation_step == 0 && !stop) {
             update_bodies();
         }
-
         for (Body b : bodies) {
             Vector center = b.position, arrow_end = b.position.add(b.velocity);
             double s = Math.sqrt(b.mass) * 2;
@@ -128,18 +148,18 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener {
             float thue = b.hue - (float) (dt * b.trail.size());
             for (Vector t : b.trail) {
                 g.setColor(Color.getHSBColor(thue, 1, 1));
-                g.fillOval((int) (t.x - ts / 2), (int) (t.y - ts / 2), (int) ts, (int) ts);
+                fillCircle(g, t, ts);
                 ts += (s / b.trail.size());
                 thue += dt;
             }
 
             g.setColor(Color.getHSBColor(b.hue, 1, 1));
-            g.fillOval((int) (center.x - (s / 2)), (int) (center.y - (s / 2)), (int) s, (int) s);
+            fillCircle(g, center, s);
 
             g.setColor(Color.BLACK);
-            g.drawOval((int) (center.x - (s / 2)), (int) (center.y - (s / 2)), (int) s, (int) s);
+            drawCircle(g, center, s);
 
-            g.drawLine((int) center.x, (int) center.y, (int) arrow_end.x, (int) arrow_end.y);
+            drawLine(g, center, arrow_end);
 
         }
     }
@@ -148,12 +168,13 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener {
         creation_step++;
         switch (creation_step) {
             case 1 -> {
-                current_body = new Body(new Vector(e.getX(), e.getY()), new Vector(0, 0), 1, 0);
+                current_body = new Body(new Vector((e.getX() - dx) / scale, (e.getY() - dy) / scale), new Vector(0, 0), 1, rand.nextFloat());
                 bodies.add(current_body);
             }
-            case 2 -> current_body.velocity = new Vector(e.getX(), e.getY()).sub(current_body.position);
+            case 2 ->
+                    current_body.velocity = new Vector((e.getX() - dx) / scale, (e.getY() - dy) / scale).sub(current_body.position);
             case 3 -> {
-                double size = new Vector(e.getX(), e.getY()).sub(current_body.position).length();
+                double size = new Vector((e.getX() - dx) / scale, (e.getY() - dy) / scale).sub(current_body.position).length();
                 current_body.mass = Math.max(size * size, 10);
                 bodies.sort((o1, o2) -> Double.compare(o2.mass, o1.mass));
                 creation_step = 0;
@@ -164,9 +185,10 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener {
     @Override
     public void mouseMoved(MouseEvent e) {
         switch (creation_step) {
-            case 1 -> current_body.velocity = new Vector(e.getX(), e.getY()).sub(current_body.position);
+            case 1 ->
+                    current_body.velocity = new Vector((e.getX() - dx) / scale, (e.getY() - dy) / scale).sub(current_body.position);
             case 2 -> {
-                double size = new Vector(e.getX(), e.getY()).sub(current_body.position).length();
+                double size = new Vector((e.getX() - dx) / scale, (e.getY() - dy) / scale).sub(current_body.position).length();
                 current_body.mass = Math.max(size * size, 10);
             }
         }
@@ -189,6 +211,15 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener {
     @Override
     public void mouseDragged(MouseEvent e) {
 
+    }
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        if (e.getWheelRotation() == 1) {
+            scale *= 1.1;
+        } else {
+            scale /= 1.1;
+        }
     }
 
     class Vector {

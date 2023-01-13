@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d21871b6-0043-417c-9681-15f729f5c1b3" name="Changes" comment="added visual feedback when adding objects">
+    <list default="true" id="d21871b6-0043-417c-9681-15f729f5c1b3" name="Changes" comment="added trails">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
     </list>
@@ -64,7 +64,7 @@
       <workItem from="1673261786753" duration="963000" />
       <workItem from="1673529682845" duration="83000" />
       <workItem from="1673593639209" duration="9000" />
-      <workItem from="1673594244149" duration="3278000" />
+      <workItem from="1673594244149" duration="5877000" />
     </task>
     <task id="LOCAL-00001" summary="implemented a new body creation system">
       <created>1669967154886</created>
@@ -108,7 +108,14 @@
       <option name="project" value="LOCAL" />
       <updated>1673594288074</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="added trails">
+      <created>1673597750463</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1673597750463</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -142,6 +149,7 @@
     <MESSAGE value="class disambiguation, refactoring" />
     <MESSAGE value="minor bug fixing" />
     <MESSAGE value="added visual feedback when adding objects" />
-    <option name="LAST_COMMIT_MESSAGE" value="added visual feedback when adding objects" />
+    <MESSAGE value="added trails" />
+    <option name="LAST_COMMIT_MESSAGE" value="added trails" />
   </component>
 </project>
