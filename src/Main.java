@@ -20,14 +20,14 @@ class MainWindow extends JFrame {
         super(title);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(1920, 1080);
+        setSize(1366, 768);
         setLayout(null);
 
         tf = new TextField();
         tf.setBounds(0, 150, 200, 40);
 
         panel = new MyPanel(tf);
-        panel.setBounds(0, 0, 1920, 1080);
+        panel.setBounds(0, 0, 1366, 768);
         panel.setOpaque(false);
 
         pause_button = new JButton("Pause");
@@ -81,9 +81,11 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         addMouseWheelListener(this);
         bodies = new ArrayList<>();
         rand = new Random((long) (t * 1000));
-        dx = 0;
-        dy = 0;
+        dx = 1366 / 2;
+        dy = 768 / 2;
+        System.out.println(dx + " " + dy);
         scale = 1;
+        repaint();
     }
 
     public void start_simulation(double dt) {
@@ -107,8 +109,8 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     public void reset() {
         bodies.clear();
         t = 0;
-        dx = 1920/2;
-        dy = 1080/2;
+        dx = 1366 / 2;
+        dy = 768 / 2;
         scale = 1;
     }
 
@@ -123,15 +125,15 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     }
 
     private void fillCircle(Graphics g, Vector position, double size) {
-        g.fillOval((int) ((position.x - size / 2 + dx) * scale), (int) ((position.y - size / 2 + dy) * scale), (int) (size * scale), (int) (size * scale));
+        g.fillOval((int) (((position.x - size / 2) * scale) + dx), (int) (((position.y - size / 2) * scale) + dy), (int) (size * scale), (int) (size * scale));
     }
 
     private void drawCircle(Graphics g, Vector position, double size) {
-        g.drawOval((int) ((position.x - size / 2 + dx) * scale), (int) ((position.y - size / 2 + dy) * scale), (int) (size * scale), (int) (size * scale));
+        g.drawOval((int) (((position.x - size / 2) * scale) + dx), (int) (((position.y - size / 2) * scale) + dy), (int) (size * scale), (int) (size * scale));
     }
 
     private void drawLine(Graphics g, Vector start, Vector end) {
-        g.drawLine((int) ((start.x + dx) * scale), (int) ((start.y + dy) * scale), (int) ((end.x + dx) * scale), (int) ((end.y + dy) * scale));
+        g.drawLine((int) ((start.x * scale) + dx), (int) ((start.y * scale) + dy), (int) ((end.x * scale) + dx), (int) ((end.y * scale) + dy));
     }
 
     @Override
@@ -156,10 +158,11 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
             g.setColor(Color.getHSBColor(b.hue, 1, 1));
             fillCircle(g, center, s);
 
-            g.setColor(Color.BLACK);
-            drawCircle(g, center, s);
+            if (creation_step != 0 || stop) {
+                g.setColor(Color.BLACK);
+                drawLine(g, center, arrow_end);
+            }
 
-            drawLine(g, center, arrow_end);
 
         }
     }
@@ -168,13 +171,12 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         creation_step++;
         switch (creation_step) {
             case 1 -> {
-                current_body = new Body(new Vector((e.getX() - dx) / scale, (e.getY() - dy) / scale), new Vector(0, 0), 1, rand.nextFloat());
+                current_body = new Body(new Vector(e), new Vector(0, 0), 1, rand.nextFloat());
                 bodies.add(current_body);
             }
-            case 2 ->
-                    current_body.velocity = new Vector((e.getX() - dx) / scale, (e.getY() - dy) / scale).sub(current_body.position);
+            case 2 -> current_body.velocity = new Vector(e).sub(current_body.position);
             case 3 -> {
-                double size = new Vector((e.getX() - dx) / scale, (e.getY() - dy) / scale).sub(current_body.position).length();
+                double size = new Vector(e).sub(current_body.position).length();
                 current_body.mass = Math.max(size * size, 10);
                 bodies.sort((o1, o2) -> Double.compare(o2.mass, o1.mass));
                 creation_step = 0;
@@ -185,10 +187,9 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     @Override
     public void mouseMoved(MouseEvent e) {
         switch (creation_step) {
-            case 1 ->
-                    current_body.velocity = new Vector((e.getX() - dx) / scale, (e.getY() - dy) / scale).sub(current_body.position);
+            case 1 -> current_body.velocity = new Vector(e).sub(current_body.position);
             case 2 -> {
-                double size = new Vector((e.getX() - dx) / scale, (e.getY() - dy) / scale).sub(current_body.position).length();
+                double size = new Vector(e).sub(current_body.position).length();
                 current_body.mass = Math.max(size * size, 10);
             }
         }
@@ -216,9 +217,9 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         if (e.getWheelRotation() == 1) {
-            scale *= 1.1;
-        } else {
             scale /= 1.1;
+        } else {
+            scale *= 1.1;
         }
     }
 
@@ -238,6 +239,11 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         Vector(Vector a, Vector b) {
             x = b.x - a.x;
             y = b.y - a.y;
+        }
+
+        Vector(MouseEvent e) {
+            x = (e.getX() - dx) / scale;
+            y = (e.getY() - dy) / scale;
         }
 
         private boolean eq(double a, double b) {
