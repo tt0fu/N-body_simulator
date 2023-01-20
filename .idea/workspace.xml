@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d21871b6-0043-417c-9681-15f729f5c1b3" name="Changes" comment="added scaling">
+    <list default="true" id="d21871b6-0043-417c-9681-15f729f5c1b3" name="Changes" comment="fixed the scaling">
+      <change afterPath="$PROJECT_DIR$/src/MainWindow.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/MyPanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
     </list>
@@ -12,6 +14,13 @@
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -39,6 +48,13 @@
   }
 }</component>
   <component name="RunManager">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="N-body simulator" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="JetRunConfigurationType">
       <method v="2">
         <option name="Make" enabled="true" />
@@ -50,6 +66,11 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -66,7 +87,8 @@
       <workItem from="1673593639209" duration="9000" />
       <workItem from="1673594244149" duration="5999000" />
       <workItem from="1673604727707" duration="754000" />
-      <workItem from="1673863480140" duration="2285000" />
+      <workItem from="1673863480140" duration="2523000" />
+      <workItem from="1674199426153" duration="5371000" />
     </task>
     <task id="LOCAL-00001" summary="implemented a new body creation system">
       <created>1669967154886</created>
@@ -124,7 +146,14 @@
       <option name="project" value="LOCAL" />
       <updated>1673600295127</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="fixed the scaling">
+      <created>1673867907413</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1673867907413</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -160,6 +189,7 @@
     <MESSAGE value="added visual feedback when adding objects" />
     <MESSAGE value="added trails" />
     <MESSAGE value="added scaling" />
-    <option name="LAST_COMMIT_MESSAGE" value="added scaling" />
+    <MESSAGE value="fixed the scaling" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed the scaling" />
   </component>
 </project>
