@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-class MyPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
+class MyPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
     private final TextField text;
     private final Random rand;
     private double t, dt;
@@ -24,15 +24,10 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         addMouseListener(this);
         addMouseMotionListener(this);
         addMouseWheelListener(this);
-        addKeyListener(this);
         setFocusable(true);
         requestFocus();
-        bodies = new ArrayList<>();
         rand = new Random((long) (t * 1000));
-        dx = (double) this.getWidth() / 2;
-        dy = (double) this.getHeight() / 2;
-        //System.out.println(this.getWidth() + " " + this.getHeight());
-        scale = 1;
+        reset();
         repaint();
     }
 
@@ -51,17 +46,20 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
 
     public void pause() {
         stop = true;
+        requestFocus();
     }
 
     public void resume() {
         stop = false;
+        requestFocus();
     }
 
     public void reset() {
-        bodies.clear();
+        requestFocus();
+        bodies = new ArrayList<>();
         t = 0;
-        dx = (double) this.getWidth() / 2;
-        dy = (double) this.getHeight() / 2;
+        dx = 0;
+        dy = 0;
         scale = 1;
     }
 
@@ -76,15 +74,15 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     }
 
     private void fillCircle(Graphics g, Vector position, double size) {
-        g.fillOval((int) (((position.x - size / 2) * scale) + dx), (int) (((position.y - size / 2) * scale) + dy), (int) (size * scale), (int) (size * scale));
+        g.fillOval((int) (((position.x - size / 2) + dx) * scale) + getWidth()/2, (int) (((position.y - size / 2) + dy) * scale) + getHeight()/2, (int) (size * scale), (int) (size * scale));
     }
 
     private void drawCircle(Graphics g, Vector position, double size) {
-        g.drawOval((int) (((position.x - size / 2) * scale) + dx), (int) (((position.y - size / 2) * scale) + dy), (int) (size * scale), (int) (size * scale));
+        g.drawOval((int) (((position.x - size / 2) + dx) * scale) + getWidth()/2, (int) (((position.y - size / 2) + dy) * scale) + getHeight()/2, (int) (size * scale), (int) (size * scale));
     }
 
     private void drawLine(Graphics g, Vector start, Vector end) {
-        g.drawLine((int) ((start.x * scale) + dx), (int) ((start.y * scale) + dy), (int) ((end.x * scale) + dx), (int) ((end.y * scale) + dy));
+        g.drawLine((int) ((start.x + dx) * scale) + getWidth()/2, (int) ((start.y + dy) * scale) + getHeight()/2, (int) ((end.x + dx) * scale) + getWidth()/2, (int) ((end.y + dy) * scale) + getHeight()/2);
     }
 
     @Override
@@ -115,6 +113,7 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
             }
         }
     }
+
     @Override
     public void mousePressed(MouseEvent e) {
         creation_step++;
@@ -169,34 +168,13 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     public void mouseWheelMoved(MouseWheelEvent e) {
         if (e.getWheelRotation() == 1) {
             scale /= 1.1;
+//            dx *= 1.1;
+//            dy *= 1.1;
         } else {
             scale *= 1.1;
+//            dx /= 1.1;
+//            dy /= 1.1;
         }
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        System.out.println(e.getKeyChar());
-        switch (e.getKeyChar()) {
-            case 'w':
-                dx--;
-            case 's':
-                dx++;
-            case 'a':
-                dy--;
-            case 'd':
-                dy++;
-        }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-
     }
 
     class Vector {
@@ -218,8 +196,8 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         }
 
         Vector(MouseEvent e) {
-            x = (e.getX() - dx) / scale;
-            y = (e.getY() - dy) / scale;
+            x = ((e.getX() - getWidth()/2) / scale) - dx;
+            y = ((e.getY() - getHeight()/2) / scale) - dy;
         }
 
         private boolean eq0(double a) {

@@ -11,7 +11,7 @@ class MainWindow extends JFrame {
 
     public MainWindow(String title) {
         super(title);
-        //setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1300, 700);
 
@@ -33,7 +33,6 @@ class MainWindow extends JFrame {
         container.setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
 
-        // По умолчанию натуральная высота, максимальная ширина
         constraints.fill = GridBagConstraints.BOTH;
 
         constraints.weightx = 1;
@@ -59,6 +58,7 @@ class MainWindow extends JFrame {
         container.add(text, constraints);
 
         setVisible(true);
+        panel.reset();
     }
 
     public void start() {
