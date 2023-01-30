@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-class MyPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
+class MyPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
     private final TextField text;
     private final Random rand;
     private double t, dt;
@@ -16,17 +16,24 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     private boolean stop;
     private int creation_step;
     private double dx, dy, scale;
+    private boolean up, down, left, right;
 
     public MyPanel(TextField text) {
         this.text = text;
         t = 0;
         creation_step = 0;
+        rand = new Random((long) (t * 1000));
+        up = false;
+        down = false;
+        left = false;
+        right = false;
         addMouseListener(this);
         addMouseMotionListener(this);
         addMouseWheelListener(this);
+        addKeyListener(this);
         setFocusable(true);
         requestFocus();
-        rand = new Random((long) (t * 1000));
+
         reset();
         repaint();
     }
@@ -34,10 +41,7 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     public void startSimulation(double dt) {
         this.dt = dt;
         Runnable render = () -> {
-            text.setText("t = " + String.format("%.3f", t) +
-                    " dx = " + String.format("%.3f", dx) +
-                    " dy = " + String.format("%.3f", dy) +
-                    "\n scale = " + String.format("%.3f", scale));
+            text.setText("t = " + String.format("%.3f", t) + " dx = " + String.format("%.3f", dx) + " dy = " + String.format("%.3f", dy) + "\n scale = " + String.format("%.3f", scale));
             repaint();
         };
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(16);
@@ -74,15 +78,15 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     }
 
     private void fillCircle(Graphics g, Vector position, double size) {
-        g.fillOval((int) (((position.x - size / 2) + dx) * scale) + getWidth()/2, (int) (((position.y - size / 2) + dy) * scale) + getHeight()/2, (int) (size * scale), (int) (size * scale));
+        g.fillOval((int) (((position.x - size / 2) + dx) * scale) + getWidth() / 2, (int) (((position.y - size / 2) + dy) * scale) + getHeight() / 2, (int) (size * scale), (int) (size * scale));
     }
 
     private void drawCircle(Graphics g, Vector position, double size) {
-        g.drawOval((int) (((position.x - size / 2) + dx) * scale) + getWidth()/2, (int) (((position.y - size / 2) + dy) * scale) + getHeight()/2, (int) (size * scale), (int) (size * scale));
+        g.drawOval((int) (((position.x - size / 2) + dx) * scale) + getWidth() / 2, (int) (((position.y - size / 2) + dy) * scale) + getHeight() / 2, (int) (size * scale), (int) (size * scale));
     }
 
     private void drawLine(Graphics g, Vector start, Vector end) {
-        g.drawLine((int) ((start.x + dx) * scale) + getWidth()/2, (int) ((start.y + dy) * scale) + getHeight()/2, (int) ((end.x + dx) * scale) + getWidth()/2, (int) ((end.y + dy) * scale) + getHeight()/2);
+        g.drawLine((int) ((start.x + dx) * scale) + getWidth() / 2, (int) ((start.y + dy) * scale) + getHeight() / 2, (int) ((end.x + dx) * scale) + getWidth() / 2, (int) ((end.y + dy) * scale) + getHeight() / 2);
     }
 
     @Override
@@ -91,24 +95,36 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         if (creation_step == 0 && !stop) {
             updateBodies();
         }
+        if (up) {
+            dy += 10 / scale;
+        }
+        if (down) {
+            dy -= 10 / scale;
+        }
+        if (left) {
+            dx += 10 / scale;
+        }
+        if (right) {
+            dx -= 10 / scale;
+        }
         for (Body b : bodies) {
             Vector center = b.position, arrow_end = b.position.add(b.velocity);
             double s = Math.sqrt(b.mass) * 2;
 
             double ts = 1;
-            float thue = b.hue - (float) (dt * b.trail.size());
+            float thue = b.hue - (float) (dt / 10 * b.trail.size());
             for (Vector t : b.trail) {
                 g.setColor(Color.getHSBColor(thue, 1, 1));
                 fillCircle(g, t, ts);
                 ts += (s / b.trail.size());
-                thue += dt;
+                thue += dt / 10;
             }
 
             g.setColor(Color.getHSBColor(b.hue, 1, 1));
             fillCircle(g, center, s);
 
             if (creation_step != 0 || stop) {
-                g.setColor(Color.BLACK);
+                g.setColor(getForeground());
                 drawLine(g, center, arrow_end);
             }
         }
@@ -168,12 +184,39 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     public void mouseWheelMoved(MouseWheelEvent e) {
         if (e.getWheelRotation() == 1) {
             scale /= 1.1;
-//            dx *= 1.1;
-//            dy *= 1.1;
         } else {
             scale *= 1.1;
-//            dx /= 1.1;
-//            dy /= 1.1;
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyChar() == 'w') {
+            up = true;
+        } else if (e.getKeyChar() == 's') {
+            down = true;
+        } else if (e.getKeyChar() == 'a') {
+            left = true;
+        } else if (e.getKeyChar() == 'd') {
+            right = true;
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        if (e.getKeyChar() == 'w') {
+            up = false;
+        } else if (e.getKeyChar() == 's') {
+            down = false;
+        } else if (e.getKeyChar() == 'a') {
+            left = false;
+        } else if (e.getKeyChar() == 'd') {
+            right = false;
         }
     }
 
@@ -196,8 +239,8 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         }
 
         Vector(MouseEvent e) {
-            x = ((e.getX() - getWidth()/2) / scale) - dx;
-            y = ((e.getY() - getHeight()/2) / scale) - dy;
+            x = ((e.getX() - getWidth() / 2) / scale) - dx;
+            y = ((e.getY() - getHeight() / 2) / scale) - dy;
         }
 
         private boolean eq0(double a) {
@@ -270,10 +313,10 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
             for (Body b : bodies) {
                 force_sum.addin(force(b));
             }
-            if (trail.isEmpty() || new Vector(trail.get(trail.size() - 1), position).length() > 10) {
+            if (trail.isEmpty() || new Vector(trail.get(trail.size() - 1), position).length() > 1) {
                 trail.add(position.copy());
             }
-            if (trail.size() > 20) {
+            if (trail.size() > 100) {
                 trail.remove(0);
             }
             position.addin(velocity.mult(dt));

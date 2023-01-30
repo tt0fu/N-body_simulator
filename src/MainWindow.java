@@ -4,29 +4,37 @@ import java.awt.*;
 class MainWindow extends JFrame {
 
     private final MyPanel panel;
-    private final TextField text;
-    private final JButton pause_button;
-    private final JButton resume_button;
-    private final JButton reset_button;
+    private final Color background_color = Color.DARK_GRAY, foreground_color = Color.WHITE;
 
     public MainWindow(String title) {
         super(title);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1300, 700);
+        setBackground(Color.BLACK);
 
-        text = new TextField();
+        TextField text = new TextField();
+        text.setBackground(background_color);
+        text.setForeground(foreground_color);
 
         panel = new MyPanel(text);
+        panel.setBackground(background_color);
+        panel.setForeground(foreground_color);
 
-        pause_button = new JButton("Pause");
+        JButton pause_button = new JButton("Pause");
         pause_button.addActionListener(e -> panel.pause());
+        pause_button.setBackground(background_color);
+        pause_button.setForeground(foreground_color);
 
-        resume_button = new JButton("Resume");
+        JButton resume_button = new JButton("Resume");
         resume_button.addActionListener(e -> panel.resume());
+        resume_button.setBackground(background_color);
+        resume_button.setForeground(foreground_color);
 
-        reset_button = new JButton("Reset");
+        JButton reset_button = new JButton("Reset");
         reset_button.addActionListener(e -> panel.reset());
+        reset_button.setBackground(background_color);
+        reset_button.setForeground(foreground_color);
 
         Container container = getContentPane();
         container.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
