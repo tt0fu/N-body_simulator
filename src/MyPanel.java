@@ -14,38 +14,45 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     private ArrayList<Body> bodies;
     private Body current_body;
     private boolean stop;
-    private int creation_step;
+    private int creation_step, fps, frames_rendered;
     private double dx, dy, scale;
     private boolean up, down, left, right;
 
     public MyPanel(TextField text) {
         this.text = text;
-        t = 0;
-        creation_step = 0;
         rand = new Random((long) (t * 1000));
         up = false;
         down = false;
         left = false;
         right = false;
+        bodies = new ArrayList<>();
+        t = 0;
+        dt = 0.01;
+        creation_step = 0;
+        dx = 0;
+        dy = 0;
+        scale = 1;
+        fps = 0;
+        frames_rendered = 0;
         addMouseListener(this);
         addMouseMotionListener(this);
         addMouseWheelListener(this);
         addKeyListener(this);
         setFocusable(true);
         requestFocus();
-
         reset();
+        countFps();
         repaint();
     }
 
-    public void startSimulation(double dt) {
-        this.dt = dt;
-        Runnable render = () -> {
-            text.setText("t = " + String.format("%.3f", t) + " dx = " + String.format("%.3f", dx) + " dy = " + String.format("%.3f", dy) + "\n scale = " + String.format("%.3f", scale));
-            repaint();
+    public void countFps() {
+        int refresh = 500;
+        Runnable count = () -> {
+            fps = frames_rendered * (1000 / refresh);
+            frames_rendered = 0;
         };
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(16);
-        executor.scheduleAtFixedRate(render, 0, (long) (dt * 1000), TimeUnit.MILLISECONDS);
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        executor.scheduleAtFixedRate(count, 0, refresh, TimeUnit.MILLISECONDS);
     }
 
     public void pause() {
@@ -62,9 +69,12 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         requestFocus();
         bodies = new ArrayList<>();
         t = 0;
+        creation_step = 0;
         dx = 0;
         dy = 0;
         scale = 1;
+        fps = 0;
+        frames_rendered = 0;
     }
 
     private void updateBodies() {
@@ -92,9 +102,11 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     @Override
     public void paint(Graphics g) {
         super.paint(g);
+        text.setText("fps: " + fps + " dx: " + String.format("%.3f", dx) + " dy: " + String.format("%.3f", dy) + " scale: " + String.format("%.3f", scale));
         if (creation_step == 0 && !stop) {
             updateBodies();
         }
+        frames_rendered++;
         if (up) {
             dy += 10 / scale;
         }
@@ -128,6 +140,7 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
                 drawLine(g, center, arrow_end);
             }
         }
+        repaint();
     }
 
     @Override
@@ -313,10 +326,8 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
             for (Body b : bodies) {
                 force_sum.addin(force(b));
             }
-            if (trail.isEmpty() || new Vector(trail.get(trail.size() - 1), position).length() > 1) {
-                trail.add(position.copy());
-            }
-            if (trail.size() > 100) {
+            trail.add(position.copy());
+            if (trail.size() > 50) {
                 trail.remove(0);
             }
             position.addin(velocity.mult(dt));

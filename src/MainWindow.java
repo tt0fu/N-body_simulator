@@ -68,8 +68,4 @@ class MainWindow extends JFrame {
         setVisible(true);
         panel.reset();
     }
-
-    public void start() {
-        panel.startSimulation(0.01);
-    }
 }

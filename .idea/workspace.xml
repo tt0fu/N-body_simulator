@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d21871b6-0043-417c-9681-15f729f5c1b3" name="Changes" comment="fixed the scaling and translating system">
+    <list default="true" id="d21871b6-0043-417c-9681-15f729f5c1b3" name="Changes" comment="Added the dark theme and keyboard movement system">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MainWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MainWindow.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MyPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MyPanel.java" afterDir="false" />
     </list>
@@ -94,7 +95,9 @@
       <workItem from="1674199426153" duration="5702000" />
       <workItem from="1674803620125" duration="5401000" />
       <workItem from="1675065652546" duration="458000" />
-      <workItem from="1675072830716" duration="1882000" />
+      <workItem from="1675072830716" duration="3489000" />
+      <workItem from="1675159253568" duration="768000" />
+      <workItem from="1675174838193" duration="3070000" />
     </task>
     <task id="LOCAL-00001" summary="implemented a new body creation system">
       <created>1669967154886</created>
@@ -173,7 +176,14 @@
       <option name="project" value="LOCAL" />
       <updated>1674809853121</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Added the dark theme and keyboard movement system">
+      <created>1675074992858</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1675074992858</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -212,6 +222,7 @@
     <MESSAGE value="fixed the scaling" />
     <MESSAGE value="separated the files" />
     <MESSAGE value="fixed the scaling and translating system" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed the scaling and translating system" />
+    <MESSAGE value="Added the dark theme and keyboard movement system" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added the dark theme and keyboard movement system" />
   </component>
 </project>
