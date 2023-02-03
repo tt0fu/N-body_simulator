@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d21871b6-0043-417c-9681-15f729f5c1b3" name="Changes" comment="Made the warning count 0">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MainWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MainWindow.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MyPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MyPanel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -100,7 +99,7 @@
       <workItem from="1675182714696" duration="877000" />
       <workItem from="1675184000009" duration="7000" />
       <workItem from="1675184092678" duration="433000" />
-      <workItem from="1675408670809" duration="1576000" />
+      <workItem from="1675408670809" duration="3326000" />
     </task>
     <task id="LOCAL-00001" summary="implemented a new body creation system">
       <created>1669967154886</created>
@@ -193,7 +192,14 @@
       <option name="project" value="LOCAL" />
       <updated>1675178258769</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Made the warning count 0">
+      <created>1675410641236</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1675410641237</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -234,6 +240,7 @@
     <MESSAGE value="fixed the scaling and translating system" />
     <MESSAGE value="Added the dark theme and keyboard movement system" />
     <MESSAGE value="Added the fps counter" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added the fps counter" />
+    <MESSAGE value="Made the warning count 0" />
+    <option name="LAST_COMMIT_MESSAGE" value="Made the warning count 0" />
   </component>
 </project>

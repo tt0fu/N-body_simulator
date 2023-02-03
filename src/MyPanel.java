@@ -147,6 +147,7 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     @Override
     public void mousePressed(MouseEvent e) {
         creation_step++;
+        requestFocus();
         switch (creation_step) {
             case 1 -> {
                 current_body = new Body(new Vector(e), new Vector(0, 0), 1, rand.nextFloat());
