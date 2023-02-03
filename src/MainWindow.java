@@ -4,7 +4,6 @@ import java.awt.*;
 class MainWindow extends JFrame {
 
     private final MyPanel panel;
-    private final Color background_color = Color.DARK_GRAY, foreground_color = Color.WHITE;
 
     public MainWindow(String title) {
         super(title);
@@ -14,7 +13,9 @@ class MainWindow extends JFrame {
         setBackground(Color.BLACK);
 
         TextField text = new TextField();
+        Color background_color = Color.DARK_GRAY;
         text.setBackground(background_color);
+        Color foreground_color = Color.WHITE;
         text.setForeground(foreground_color);
 
         panel = new MyPanel(text);

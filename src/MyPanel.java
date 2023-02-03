@@ -10,7 +10,8 @@ import java.util.concurrent.TimeUnit;
 class MyPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
     private final TextField text;
     private final Random rand;
-    private double t, dt;
+    private double t;
+    public double dt;
     private ArrayList<Body> bodies;
     private Body current_body;
     private boolean stop;
@@ -91,9 +92,9 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         g.fillOval((int) (((position.x - size / 2) + dx) * scale) + getWidth() / 2, (int) (((position.y - size / 2) + dy) * scale) + getHeight() / 2, (int) (size * scale), (int) (size * scale));
     }
 
-    private void drawCircle(Graphics g, Vector position, double size) {
-        g.drawOval((int) (((position.x - size / 2) + dx) * scale) + getWidth() / 2, (int) (((position.y - size / 2) + dy) * scale) + getHeight() / 2, (int) (size * scale), (int) (size * scale));
-    }
+//    private void drawCircle(Graphics g, Vector position, double size) {
+//        g.drawOval((int) (((position.x - size / 2) + dx) * scale) + getWidth() / 2, (int) (((position.y - size / 2) + dy) * scale) + getHeight() / 2, (int) (size * scale), (int) (size * scale));
+//    }
 
     private void drawLine(Graphics g, Vector start, Vector end) {
         g.drawLine((int) ((start.x + dx) * scale) + getWidth() / 2, (int) ((start.y + dy) * scale) + getHeight() / 2, (int) ((end.x + dx) * scale) + getWidth() / 2, (int) ((end.y + dy) * scale) + getHeight() / 2);
@@ -252,8 +253,8 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         }
 
         Vector(MouseEvent e) {
-            x = ((e.getX() - getWidth() / 2) / scale) - dx;
-            y = ((e.getY() - getHeight() / 2) / scale) - dy;
+            x = ((double)(e.getX() - getWidth() / 2) / scale) - dx;
+            y = ((double)(e.getY() - getHeight() / 2) / scale) - dy;
         }
 
         private boolean eq0(double a) {
@@ -268,7 +269,7 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
             return new Vector(x + v.x, y + v.y);
         }
 
-        void addin(Vector v) {
+        void addIn(Vector v) {
             x += v.x;
             y += v.y;
         }
@@ -289,7 +290,7 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
             return Math.sqrt(x * x + y * y);
         }
 
-        Vector setlength(double l) {
+        Vector setLength(double l) {
             if (eq0(length())) {
                 return new Vector();
             }
@@ -318,20 +319,20 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         }
 
         Vector force(Body b) {
-            return new Vector(position, b.position).setlength((100 * (mass * b.mass)) / distTo(b));
+            return new Vector(position, b.position).setLength((100 * (mass * b.mass)) / distTo(b));
         }
 
         void update(ArrayList<Body> bodies, double dt) {
             Vector force_sum = new Vector();
             for (Body b : bodies) {
-                force_sum.addin(force(b));
+                force_sum.addIn(force(b));
             }
             trail.add(position.copy());
             if (trail.size() > 50) {
                 trail.remove(0);
             }
-            position.addin(velocity.mult(dt));
-            velocity.addin(force_sum.div(mass).mult(dt));
+            position.addIn(velocity.mult(dt));
+            velocity.addIn(force_sum.div(mass).mult(dt));
         }
     }
 }
