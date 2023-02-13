@@ -19,9 +19,9 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     private boolean stop; //Состояние: активное или приостановленное
     private int creation_step; //Этап создания нового тела
     private int fps; //Количество кадров в секунду
-    private int frames_rendered; //Количество отрисованных кадров с предыдущего промежутка измерения
+    private int frames_rendered; //Количество отрисованных кадров с предыдущего измерения
     private double dx, dy, scale; //Сдвиги по горизонтали и вертикали, масштаб
-    private boolean up, down, left, right; //Показатели нажатия клавиш для перемещения по пространству
+    private boolean up, down, left, right; //Показатели нажатия клавиш для сдвига
 
     public MyPanel(TextField text) {
         //Инициализация переменных
@@ -58,7 +58,7 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
 
     public void countFps() { //Подсчёт кадров в секунду
         int refresh = 500;
-        //Каждые refresh миллисекунд, количество отрисованных кадров за этот период переводится в количество кадров в секунду
+        //Каждые refresh миллисекунд производится измерение количества кадров в секунду
         Runnable count = () -> {
             fps = frames_rendered * (1000 / refresh);
             frames_rendered = 0;
@@ -102,11 +102,13 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         t += dt;
     }
 
-    private void fillCircle(Graphics g, Vector position, double size) { //Отрисовка окружности с учётом масштаба и сдвига
+    private void fillCircle(Graphics g, Vector position, double size) {
+        //Отрисовка окружности с учётом масштаба и сдвига
         g.fillOval((int) (((position.x - size / 2) + dx) * scale) + getWidth() / 2, (int) (((position.y - size / 2) + dy) * scale) + getHeight() / 2, (int) (size * scale), (int) (size * scale));
     }
 
-    private void drawLine(Graphics g, Vector start, Vector end) { //Отрисовка отрезка с учётом масштаба и сдвига
+    private void drawLine(Graphics g, Vector start, Vector end) {
+        //Отрисовка отрезка с учётом масштаба и сдвига
         g.drawLine((int) ((start.x + dx) * scale) + getWidth() / 2, (int) ((start.y + dy) * scale) + getHeight() / 2, (int) ((end.x + dx) * scale) + getWidth() / 2, (int) ((end.y + dy) * scale) + getHeight() / 2);
     }
 
@@ -150,7 +152,7 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
             //Отрисовка следа тела
             double ts = 1;
             float thue = b.hue - (float) (dt / 10 * b.trail.size());
-            //Проходясь по предыдущим положениям тела, рисуем окружности увеличивающегося размера и переливающегося оттенка
+            //Проходясь по предыдущим положениям тела, рисуем окружности
             for (Vector t : b.trail) {
                 g.setColor(Color.getHSBColor(thue, 1, 1));
                 fillCircle(g, t, ts);
@@ -162,7 +164,7 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
             g.setColor(Color.getHSBColor(b.hue, 1, 1));
             fillCircle(g, center, s);
 
-            //Если симуляция приостановлена или в процессе создания нового тела, то рисуется вектор его скорости
+            //Если симуляция приостановлена, то рисуется вектор скорости
             if (creation_step != 0 || stop) {
                 g.setColor(getForeground());
                 drawLine(g, center, arrow_end);
@@ -172,7 +174,8 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     }
 
     @Override
-    public void mousePressed(MouseEvent e) { //При нажатии мышки совершается переход на следующий этап создания тела
+    public void mousePressed(MouseEvent e) {
+        //При нажатии мышки совершается переход на следующий этап создания тела
         creation_step++;
         requestFocus();
         switch (creation_step) {
@@ -194,7 +197,8 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     }
 
     @Override
-    public void mouseMoved(MouseEvent e) { // Динамическое обновление параметров создаваемого тела при движении мыши
+    public void mouseMoved(MouseEvent e) {
+        // Динамическое обновление параметров создаваемого тела при движении мыши
         switch (creation_step) {
             case 1 -> current_body.velocity = new Vector(e).sub(current_body.position);
             case 2 -> {
@@ -239,7 +243,8 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     }
 
     @Override
-    public void keyPressed(KeyEvent e) { //Обновление полей, отвечающих за сдвиг экрана при нажатии клавиш
+    public void keyPressed(KeyEvent e) {
+        //Обновление полей, отвечающих за сдвиг экрана при нажатии клавиш
         if (e.getKeyChar() == 'w') {
             up = true;
         } else if (e.getKeyChar() == 's') {
@@ -252,7 +257,8 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     }
 
     @Override
-    public void keyReleased(KeyEvent e) { //Обновление полей, отвечающих за сдвиг экрана при отпускании клавиш
+    public void keyReleased(KeyEvent e) {
+        //Обновление полей, отвечающих за сдвиг экрана при отпускании клавиш
         if (e.getKeyChar() == 'w') {
             up = false;
         } else if (e.getKeyChar() == 's') {
@@ -278,23 +284,25 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
             this.y = y;
         }
 
-        Vector(Vector a, Vector b) { //Конструктор, создающий вектор, соединяющий концы векторов a и b
+        Vector(Vector a, Vector b) {
+            //Конструктор, создающий вектор, соединяющий концы векторов a и b
             x = b.x - a.x;
             y = b.y - a.y;
         }
 
-        Vector(MouseEvent e) { //Конструктор, создающий вектор по положению мыши на экране
+        Vector(MouseEvent e) {
+            //Конструктор, создающий вектор по положению мыши на экране
             x = ((double) (e.getX() - getWidth() / 2) / scale) - dx;
             y = ((double) (e.getY() - getHeight() / 2) / scale) - dy;
         }
 
-        private boolean eq0(double a) {
+        private boolean eq0(double a) { //Метод сравнивания с нулём
             return Math.abs(a) < 1e-5;
-        } //Метод сравнивания с нулём
+        }
 
-        public Vector copy() {
+        public Vector copy() { //Метод копирования вектора
             return new Vector(x, y);
-        } //Метод копирования вектора
+        }
 
         Vector add(Vector v) {
             return new Vector(x + v.x, y + v.y);
@@ -337,7 +345,8 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         public float hue; //Оттенок тела
         public ArrayList<Vector> trail; //Список векторов положений следа тела
 
-        public Body(Vector position, Vector velocity, double mass, float hue) { //Конструктор по указанным полям
+        public Body(Vector position, Vector velocity, double mass, float hue) {
+            //Конструктор по указанным полям
             this.position = position;
             this.velocity = velocity;
             this.mass = mass;
