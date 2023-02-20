@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d21871b6-0043-417c-9681-15f729f5c1b3" name="Changes" comment="Added comments на русском языке">
+    <list default="true" id="d21871b6-0043-417c-9681-15f729f5c1b3" name="Changes" comment="Fixed the comments на русском языке">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MainWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MainWindow.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,6 +103,8 @@
       <workItem from="1675678153878" duration="3438000" />
       <workItem from="1675778211701" duration="1197000" />
       <workItem from="1676013018587" duration="6183000" />
+      <workItem from="1676284516655" duration="965000" />
+      <workItem from="1676383978769" duration="631000" />
     </task>
     <task id="LOCAL-00001" summary="implemented a new body creation system">
       <created>1669967154886</created>
@@ -215,7 +218,14 @@
       <option name="project" value="LOCAL" />
       <updated>1676018529775</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Fixed the comments на русском языке">
+      <created>1676284651701</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1676284651701</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -258,6 +268,7 @@
     <MESSAGE value="Added the fps counter" />
     <MESSAGE value="Made the warning count 0" />
     <MESSAGE value="Added comments на русском языке" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added comments на русском языке" />
+    <MESSAGE value="Fixed the comments на русском языке" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed the comments на русском языке" />
   </component>
 </project>

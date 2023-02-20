@@ -13,9 +13,9 @@ class MainWindow extends JFrame {
 
         //Создание текстового поля, на которое будут выводться информация о симуляции
         TextField text = new TextField();
-        Color background_color = Color.DARK_GRAY;
+        Color background_color = Color.WHITE;
         text.setBackground(background_color);
-        Color foreground_color = Color.WHITE;
+        Color foreground_color = Color.BLACK;
         text.setForeground(foreground_color);
 
         //Создание самой панели, в которой будет проходить симуляция
