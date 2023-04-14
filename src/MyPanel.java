@@ -245,13 +245,14 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     @Override
     public void keyPressed(KeyEvent e) {
         //Обновление полей, отвечающих за сдвиг экрана при нажатии клавиш
-        if (e.getKeyChar() == 'w') {
+        int k = e.getKeyCode();
+        if (k == KeyEvent.VK_W) {
             up = true;
-        } else if (e.getKeyChar() == 's') {
+        } else if (k == KeyEvent.VK_S) {
             down = true;
-        } else if (e.getKeyChar() == 'a') {
+        } else if (k == KeyEvent.VK_A) {
             left = true;
-        } else if (e.getKeyChar() == 'd') {
+        } else if (k == KeyEvent.VK_D) {
             right = true;
         }
     }
@@ -259,13 +260,14 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     @Override
     public void keyReleased(KeyEvent e) {
         //Обновление полей, отвечающих за сдвиг экрана при отпускании клавиш
-        if (e.getKeyChar() == 'w') {
+        int k = e.getKeyCode();
+        if (k == KeyEvent.VK_W) {
             up = false;
-        } else if (e.getKeyChar() == 's') {
+        } else if (k == KeyEvent.VK_S) {
             down = false;
-        } else if (e.getKeyChar() == 'a') {
+        } else if (k == KeyEvent.VK_A) {
             left = false;
-        } else if (e.getKeyChar() == 'd') {
+        } else if (k == KeyEvent.VK_D) {
             right = false;
         }
     }
