@@ -90,6 +90,17 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         frames_rendered = 0;
     }
 
+    public void stress() {
+        Random rng = new Random();
+        for (int i = 0; i < 1000; i++) {
+            Vector pos = new Vector(rng.nextDouble() * 500 - 250, rng.nextDouble() * 500 - 250);
+            Vector vel = new Vector(rng.nextDouble() * 500 - 250, rng.nextDouble() * 500 - 250);
+            double m = rng.nextDouble() * 100;
+            float h = rng.nextFloat();
+            bodies.add(new Body(pos, vel, m, h));
+        }
+    }
+
     private void updateBodies() { //Обновление параметров тел во время прорисоски кадров
         ArrayList<Body> bodies_updated = new ArrayList<>(bodies);
 
@@ -105,10 +116,6 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         executor.shutdown();
         while (!executor.isTerminated()) {
         }
-//        for (Body b : bodies_updated) {
-//            b.update(bodies, dt);
-//            b.hue += dt / 10;
-//        }
         //Замена старого списка тел новым и совершение шага во времени
         bodies = bodies_updated;
         t += dt;

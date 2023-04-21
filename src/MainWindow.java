@@ -41,6 +41,12 @@ class MainWindow extends JFrame {
         reset_button.setBackground(background_color);
         reset_button.setForeground(foreground_color);
 
+        //Создание кнопки стресс-тестирования
+        JButton stress_button = new JButton("stress");
+        stress_button.addActionListener(e -> panel.stress());
+        stress_button.setBackground(background_color);
+        stress_button.setForeground(foreground_color);
+
         //Создание контейнера заполнения окна элементами
         Container container = getContentPane();
         container.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
@@ -51,7 +57,7 @@ class MainWindow extends JFrame {
         //Добавление панели симуляции в контейнер
         constraints.weightx = 1;
         constraints.weighty = 1;
-        constraints.gridwidth = 4;
+        constraints.gridwidth = 5;
         constraints.gridx = 0;
         constraints.gridy = 0;
         container.add(panel, constraints);
@@ -70,6 +76,9 @@ class MainWindow extends JFrame {
         container.add(reset_button, constraints);
 
         constraints.gridx = 3;
+        container.add(stress_button, constraints);
+
+        constraints.gridx = 4;
         container.add(text, constraints);
 
         //Появление окна на экране
