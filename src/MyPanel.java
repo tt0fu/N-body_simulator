@@ -33,7 +33,7 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         right = false;
         bodies = new ArrayList<>();
         t = 0;
-        dt = 0.01;
+        dt = 0.001;
         creation_step = 0;
         dx = 0;
         dy = 0;
@@ -112,7 +112,7 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
             phaser.register();
             int start = batch * batch_size;
             int end = Math.min(batch_size * (batch + 1), bodies.size());
-            body_updater.execute(() -> {
+            body_updater.submit(() -> {
                 for (int j = start; j < end; j++) {
                     Body b = bodies.get(j);
                     b.update(bodies_old, dt);
@@ -181,7 +181,7 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
             float thue = b.hue - (float) (dt / 10 * b.trail.size());
             final ArrayList<Vector> trail = new ArrayList<>(b.trail);
             //Проходясь по предыдущим положениям тела, рисуем окружности
-            for (Vector t : trail) {
+            for (final Vector t : trail) {
                 g.setColor(Color.getHSBColor(thue, 1, 1));
                 fillCircle(g, t, ts);
                 ts += (s / b.trail.size());
