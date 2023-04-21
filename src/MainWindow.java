@@ -42,7 +42,7 @@ class MainWindow extends JFrame {
         reset_button.setForeground(foreground_color);
 
         //Создание кнопки стресс-тестирования
-        JButton stress_button = new JButton("stress");
+        JButton stress_button = new JButton("Spawn 1000 bodies");
         stress_button.addActionListener(e -> panel.stress());
         stress_button.setBackground(background_color);
         stress_button.setForeground(foreground_color);

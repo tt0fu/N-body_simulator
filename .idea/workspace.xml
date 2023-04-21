@@ -4,7 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d21871b6-0043-417c-9681-15f729f5c1b3" name="Changes" comment="Improved performance">
+    <list default="true" id="d21871b6-0043-417c-9681-15f729f5c1b3" name="Changes" comment="Added stress button">
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MainWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MainWindow.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MyPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MyPanel.java" afterDir="false" />
@@ -118,7 +119,11 @@
       <workItem from="1678432522904" duration="81000" />
       <workItem from="1681456898952" duration="2363000" />
       <workItem from="1681727229528" duration="437000" />
-      <workItem from="1682061230875" duration="4306000" />
+      <workItem from="1682061230875" duration="6006000" />
+      <workItem from="1682068139062" duration="26000" />
+      <workItem from="1682071310458" duration="1344000" />
+      <workItem from="1682091582434" duration="1235000" />
+      <workItem from="1682092862644" duration="182000" />
     </task>
     <task id="LOCAL-00001" summary="implemented a new body creation system">
       <created>1669967154886</created>
@@ -267,7 +272,14 @@
       <option name="project" value="LOCAL" />
       <updated>1682064328457</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Added stress button">
+      <created>1682065715296</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1682065715296</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -314,6 +326,7 @@
     <MESSAGE value="minor fixes" />
     <MESSAGE value="added keyboard language compatibility" />
     <MESSAGE value="Improved performance" />
-    <option name="LAST_COMMIT_MESSAGE" value="Improved performance" />
+    <MESSAGE value="Added stress button" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added stress button" />
   </component>
 </project>

@@ -3,10 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 
 //Класс панели симуляции. Здесь описывается поведение всего, что происходит в симуляции тел.
@@ -23,6 +20,8 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     private int frames_rendered; //Количество отрисованных кадров с предыдущего измерения
     private double dx, dy, scale; //Сдвиги по горизонтали и вертикали, масштаб
     private boolean up, down, left, right; //Показатели нажатия клавиш для сдвига
+    private final Phaser phaser;
+    private final ExecutorService body_updater;
 
     public MyPanel(TextField text) {
         //Инициализация переменных
@@ -41,6 +40,8 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         scale = 1;
         fps = 0;
         frames_rendered = 0;
+        body_updater = Executors.newFixedThreadPool(8);
+        phaser = new Phaser();
 
         //Добавление считывателей клавиатуры и мышки
         addMouseListener(this);
@@ -56,8 +57,7 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         countFps();
         repaint();
     }
-
-    public void countFps() { //Подсчёт кадров в секунду
+    private void countFps() { //Подсчёт кадров в секунду
         int refresh = 500;
         //Каждые refresh миллисекунд производится измерение количества кадров в секунду
         Runnable count = () -> {
@@ -103,19 +103,16 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
 
     private void updateBodies() { //Обновление параметров тел во время прорисоски кадров
         ArrayList<Body> bodies_updated = new ArrayList<>(bodies);
-
         //Для каждого тела обновляем его полодение и скорость, а также его цвет
-
-        ExecutorService executor = Executors.newFixedThreadPool(16);
+        phaser.bulkRegister(bodies_updated.size() + 1);
         for (Body b : bodies_updated) {
-            executor.execute(() -> {
-                b.update(bodies, dt);
-                b.hue += dt / 10;
+            body_updater.execute(() -> {
+            b.update(bodies, dt);
+            b.hue += dt / 10;
+            phaser.arriveAndDeregister();
             });
         }
-        executor.shutdown();
-        while (!executor.isTerminated()) {
-        }
+        phaser.arriveAndAwaitAdvance();
         //Замена старого списка тел новым и совершение шага во времени
         bodies = bodies_updated;
         t += dt;
@@ -338,7 +335,7 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
             return new Vector(x - v.x, y - v.y);
         }
 
-        Vector mult(double k) { // Метод умножения вектора на число
+        Vector multiply(double k) { // Метод умножения вектора на число
             return new Vector(x * k, y * k);
         }
 
@@ -355,7 +352,7 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
                 return new Vector();
             }
             double k = l / length();
-            return mult(k);
+            return multiply(k);
         }
     }
 
@@ -398,8 +395,8 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
             }
 
             //Обновление положения и скорости тела
-            position.addIn(velocity.mult(dt));
-            velocity.addIn(force_sum.div(mass).mult(dt));
+            position.addIn(velocity.multiply(dt));
+            velocity.addIn(force_sum.div(mass).multiply(dt));
         }
     }
 }
