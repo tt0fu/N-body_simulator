@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d21871b6-0043-417c-9681-15f729f5c1b3" name="Changes" comment="Fixed the multiprocessing">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+    <list default="true" id="d21871b6-0043-417c-9681-15f729f5c1b3" name="Changes" comment="Fixed the ConcurrentModificationException thrown by the trail painter">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MyPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MyPanel.java" afterDir="false" />
     </list>
@@ -285,7 +284,14 @@
       <option name="project" value="LOCAL" />
       <updated>1682099117408</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Fixed the ConcurrentModificationException thrown by the trail painter">
+      <created>1682099534760</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1682099534760</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -334,6 +340,7 @@
     <MESSAGE value="Improved performance" />
     <MESSAGE value="Added stress button" />
     <MESSAGE value="Fixed the multiprocessing" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed the multiprocessing" />
+    <MESSAGE value="Fixed the ConcurrentModificationException thrown by the trail painter" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed the ConcurrentModificationException thrown by the trail painter" />
   </component>
 </project>

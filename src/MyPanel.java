@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Vector;
 import java.util.concurrent.*;
 
 
@@ -92,16 +93,16 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     }
 
     public void stress() {
-        stop = true;
         Random rng = new Random();
         for (int i = 0; i < 1000; i++) {
             Vector pos = new Vector(rng.nextDouble() * 500 - 250, rng.nextDouble() * 500 - 250);
-            Vector vel = new Vector(rng.nextDouble() * 500 - 250, rng.nextDouble() * 500 - 250);
+            Vector vel = new Vector(rng.nextDouble() * 5000 - 2500, rng.nextDouble() * 5000 - 2500);
             double m = rng.nextDouble() * 100;
             float h = rng.nextFloat();
             bodies.add(new Body(pos, vel, m, h));
         }
-        stop = false;
+        bodies.sort((o1, o2) -> Double.compare(o2.mass, o1.mass));
+        repaint();
     }
 
     private void updateBodies() { //Обновление параметров тел во время прорисоски кадров
@@ -116,7 +117,7 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
                 for (int j = start; j < end; j++) {
                     Body b = bodies.get(j);
                     b.update(bodies_old, dt);
-                    b.hue += dt / 10;
+                    b.hue += 0.0005;
                 }
                 phaser.arriveAndDeregister();
             });
@@ -183,7 +184,9 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
             //Проходясь по предыдущим положениям тела, рисуем окружности
             for (final Vector t : trail) {
                 g.setColor(Color.getHSBColor(thue, 1, 1));
-                fillCircle(g, t, ts);
+                if (t != null) {
+                    fillCircle(g, t, ts);
+                }
                 ts += (s / b.trail.size());
                 thue += dt / 10;
             }
@@ -401,14 +404,22 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
             }
 
             //Сохранение старого положения в список следа тела и сохранение его длины
-            trail.add(position.copy());
+            if (!trail.isEmpty()) {
+                Vector d = new Vector(trail.get(trail.size() - 1), position);
+                if (d.length() > 10) {
+                    trail.add(position.copy());
+                }
+            } else {
+                trail.add(position.copy());
+            }
+
             while (trail.size() > 50 || trail.size() * bodies.size() > 1000) {
                 trail.remove(0);
             }
 
             //Обновление положения и скорости тела
-            position.addIn(velocity.multiply(dt));
             velocity.addIn(force_sum.div(mass).multiply(dt));
+            position.addIn(velocity.multiply(dt));
         }
     }
 }
