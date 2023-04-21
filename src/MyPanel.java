@@ -57,6 +57,7 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         countFps();
         repaint();
     }
+
     private void countFps() { //Подсчёт кадров в секунду
         int refresh = 500;
         //Каждые refresh миллисекунд производится измерение количества кадров в секунду
@@ -91,6 +92,7 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
     }
 
     public void stress() {
+        stop = true;
         Random rng = new Random();
         for (int i = 0; i < 1000; i++) {
             Vector pos = new Vector(rng.nextDouble() * 500 - 250, rng.nextDouble() * 500 - 250);
@@ -99,22 +101,27 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
             float h = rng.nextFloat();
             bodies.add(new Body(pos, vel, m, h));
         }
+        stop = false;
     }
 
     private void updateBodies() { //Обновление параметров тел во время прорисоски кадров
-        ArrayList<Body> bodies_updated = new ArrayList<>(bodies);
+        final ArrayList<Body> bodies_old = new ArrayList<>(bodies);
+        final int batch_size = 50;
         //Для каждого тела обновляем его полодение и скорость, а также его цвет
-        phaser.bulkRegister(bodies_updated.size() + 1);
-        for (Body b : bodies_updated) {
+        for (int batch = 0; batch * batch_size < bodies.size(); batch++) {
+            phaser.register();
+            int start = batch * batch_size;
+            int end = Math.min(batch_size * (batch + 1), bodies.size());
             body_updater.execute(() -> {
-            b.update(bodies, dt);
-            b.hue += dt / 10;
-            phaser.arriveAndDeregister();
+                for (int j = start; j < end; j++) {
+                    Body b = bodies.get(j);
+                    b.update(bodies_old, dt);
+                    b.hue += dt / 10;
+                }
+                phaser.arriveAndDeregister();
             });
         }
         phaser.arriveAndAwaitAdvance();
-        //Замена старого списка тел новым и совершение шага во времени
-        bodies = bodies_updated;
         t += dt;
     }
 
@@ -128,21 +135,7 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         g.drawLine((int) ((start.x + dx) * scale) + getWidth() / 2, (int) ((start.y + dy) * scale) + getHeight() / 2, (int) ((end.x + dx) * scale) + getWidth() / 2, (int) ((end.y + dy) * scale) + getHeight() / 2);
     }
 
-    @Override
-    public void paint(Graphics g) { //Основной цикл обновления и отрисовки тел
-        super.paint(g);
-
-        //Вывод информации в текстовое поле
-        text.setText("fps: " + fps + " t: " + String.format("%.3f", t) + " dx: " + String.format("%.3f", dx) + " dy: " + String.format("%.3f", dy) + " scale: " + String.format("%.3f", scale));
-
-        //Обновление тел
-        if (creation_step == 0 && !stop) {
-            updateBodies();
-        }
-
-        //Увенличение счётчика отрисованных кадров
-        frames_rendered++;
-
+    private void moveScreen() {
         //Сдвиг экрана в зависимости от зажатых клавиш
         if (up) {
             dy += 10 / scale;
@@ -156,6 +149,24 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         if (right) {
             dx -= 10 / scale;
         }
+    }
+
+    @Override
+    public void paint(Graphics g) { //Основной цикл обновления и отрисовки тел
+        super.paint(g);
+
+        //Вывод информации в текстовое поле
+        text.setText("fps: " + fps + " t: " + String.format("%.3f", t) + " n: " + bodies.size());
+
+        //Обновление тел
+        if (!bodies.isEmpty() && creation_step == 0 && !stop) {
+            updateBodies();
+        }
+
+        //Увеличение счётчика отрисованных кадров
+        frames_rendered++;
+
+        moveScreen();
 
         //Отрисовка каждого тела
         for (Body b : bodies) {
@@ -168,8 +179,9 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
             //Отрисовка следа тела
             double ts = 1;
             float thue = b.hue - (float) (dt / 10 * b.trail.size());
+            final ArrayList<Vector> trail = new ArrayList<>(b.trail);
             //Проходясь по предыдущим положениям тела, рисуем окружности
-            for (Vector t : b.trail) {
+            for (Vector t : trail) {
                 g.setColor(Color.getHSBColor(thue, 1, 1));
                 fillCircle(g, t, ts);
                 ts += (s / b.trail.size());
