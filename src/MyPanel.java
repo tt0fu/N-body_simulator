@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -93,10 +94,21 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
         ArrayList<Body> bodies_updated = new ArrayList<>(bodies);
 
         //Для каждого тела обновляем его полодение и скорость, а также его цвет
+
+        ExecutorService executor = Executors.newFixedThreadPool(16);
         for (Body b : bodies_updated) {
-            b.update(bodies, dt);
-            b.hue += dt / 10;
+            executor.execute(() -> {
+                b.update(bodies, dt);
+                b.hue += dt / 10;
+            });
         }
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+        }
+//        for (Body b : bodies_updated) {
+//            b.update(bodies, dt);
+//            b.hue += dt / 10;
+//        }
         //Замена старого списка тел новым и совершение шага во времени
         bodies = bodies_updated;
         t += dt;
@@ -374,7 +386,7 @@ class MyPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
 
             //Сохранение старого положения в список следа тела и сохранение его длины
             trail.add(position.copy());
-            if (trail.size() > 50) {
+            while (trail.size() > 50 || trail.size() * bodies.size() > 1000) {
                 trail.remove(0);
             }
 
